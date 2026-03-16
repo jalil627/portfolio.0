@@ -202,7 +202,304 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    
+    // =============================
+// PRELOADER
+// =============================
+window.addEventListener("load", function () {
+    const preloader = document.querySelector(".preloader");
+    setTimeout(() => {
+        preloader.classList.add("hide");
+    }, 1200);
+});
+
+// =============================
+// MOBILE MENU
+// =============================
+const menuToggle = document.querySelector(".menu-toggle");
+const navLinks = document.querySelector(".nav-links");
+
+menuToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("open");
+    menuToggle.classList.toggle("active");
+});
+
+// =============================
+// SMOOTH SCROLL
+// =============================
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener("click", function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute("href"));
+        target.scrollIntoView({
+            behavior: "smooth"
+        });
+    });
+});
+
+// =============================
+// TYPED TEXT EFFECT
+// =============================
+const typedText = document.querySelector(".typed-text");
+
+const words = [
+    "Web Developer",
+    "UI Designer",
+    "Frontend Engineer",
+    "Creative Coder"
+];
+
+let wordIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+
+function typeEffect() {
+
+    const currentWord = words[wordIndex];
+    const currentChar = currentWord.substring(0, charIndex);
+
+    typedText.textContent = currentChar;
+
+    if (!isDeleting && charIndex < currentWord.length) {
+        charIndex++;
+        setTimeout(typeEffect, 80);
+    } 
+    else if (isDeleting && charIndex > 0) {
+        charIndex--;
+        setTimeout(typeEffect, 40);
+    } 
+    else {
+        isDeleting = !isDeleting;
+        wordIndex = !isDeleting ? (wordIndex + 1) % words.length : wordIndex;
+        setTimeout(typeEffect, 800);
+    }
+}
+
+typeEffect();
+
+
+// =============================
+// COUNTER ANIMATION
+// =============================
+const counters = document.querySelectorAll(".stat-number");
+
+const counterObserver = new IntersectionObserver(entries => {
+
+    entries.forEach(entry => {
+
+        if (entry.isIntersecting) {
+
+            const counter = entry.target;
+            const target = +counter.getAttribute("data-target");
+
+            let count = 0;
+
+            const update = () => {
+
+                const increment = target / 100;
+
+                count += increment;
+
+                if (count < target) {
+                    counter.innerText = Math.floor(count);
+                    requestAnimationFrame(update);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+
+            update();
+        }
+
+    });
+
+});
+
+counters.forEach(counter => {
+    counterObserver.observe(counter);
+});
+
+
+// =============================
+// PROJECT FILTER
+// =============================
+const filterBtns = document.querySelectorAll(".filter-btn");
+const projects = document.querySelectorAll(".project-card");
+
+filterBtns.forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+        filterBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const filter = btn.dataset.filter;
+
+        projects.forEach(project => {
+
+            if (filter === "all" || project.dataset.category === filter) {
+                project.style.display = "block";
+            } else {
+                project.style.display = "none";
+            }
+
+        });
+
+    });
+
+});
+
+
+// =============================
+// SCROLL PROGRESS BAR
+// =============================
+window.addEventListener("scroll", () => {
+
+    const progress = document.querySelector(".nav-progress");
+
+    const totalHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+
+    const progressHeight = (window.scrollY / totalHeight) * 100;
+
+    progress.style.width = progressHeight + "%";
+
+});
+
+
+// =============================
+// CUSTOM CURSOR
+// =============================
+const cursor = document.querySelector(".cursor");
+const cursorDot = document.querySelector(".cursor-dot");
+
+document.addEventListener("mousemove", e => {
+
+    cursor.style.left = e.clientX + "px";
+    cursor.style.top = e.clientY + "px";
+
+    cursorDot.style.left = e.clientX + "px";
+    cursorDot.style.top = e.clientY + "px";
+
+});
+
+document.querySelectorAll("a, button").forEach(el => {
+
+    el.addEventListener("mouseenter", () => {
+        cursor.classList.add("hover");
+    });
+
+    el.addEventListener("mouseleave", () => {
+        cursor.classList.remove("hover");
+    });
+
+});
+
+
+// =============================
+// CONTACT FORM
+// =============================
+const form = document.getElementById("contactForm");
+
+form.addEventListener("submit", function (e) {
+
+    e.preventDefault();
+
+    alert("Thank you! Your message has been sent.");
+
+    form.reset();
+
+});
+
+
+// =============================
+// PARTICLE BACKGROUND
+// =============================
+const canvas = document.getElementById("bg-canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+class Particle {
+
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+    }
+
+    update() {
+
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x > canvas.width || this.x < 0) {
+            this.speedX *= -1;
+        }
+
+        if (this.y > canvas.height || this.y < 0) {
+            this.speedY *= -1;
+        }
+
+    }
+
+    draw() {
+
+        ctx.fillStyle = "#6c63ff";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+
+    }
+
+}
+
+function initParticles() {
+
+    particles = [];
+
+    for (let i = 0; i < 100; i++) {
+
+        particles.push(new Particle());
+
+    }
+
+}
+
+function animateParticles() {
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+
+        p.update();
+        p.draw();
+
+    });
+
+    requestAnimationFrame(animateParticles);
+
+}
+
+initParticles();
+animateParticles();
+
+
+// =============================
+// RESIZE CANVAS
+// =============================
+window.addEventListener("resize", () => {
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    initParticles();
+
+});
     // ========================================
     // MOBILE MENU TOGGLE
     // ========================================
